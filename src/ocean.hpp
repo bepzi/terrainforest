@@ -54,4 +54,7 @@ class Ocean : public Stage {
     mat4 model;
     mat4 view;
     mat4 perspective;
+
+    mat4 make_view_matrix();
+    mat4 make_perspective_matrix(float aspect_ratio);
 };

@@ -56,25 +56,16 @@ void Ocean::init() {
                           GL_FALSE, sizeof(Vertex), (char *)0 + sizeof(vec3));
 
     // Put the plane into world coordinates
-    float model_scale = N / (float)WORLD_WIDTH;
-    float translation = -((float)(N - 1) / 2);
-    model = glm::scale(mat4(1.0f), vec3(model_scale));
-    model = glm::translate(model, vec3(translation, translation, 0.0f));
-    model = glm::rotate(model, radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = plane.get_model_matrix(WORLD_WIDTH);
 
     GLuint model_attrib = 2;
     glUniformMatrix4fv(model_attrib, 1, GL_FALSE, value_ptr(model));
 
-    // Put the world into camera coordinates
-    camera.position = vec3(0.0f, 4.0f, 0.0f);
+    // Put the world into camera/view coordinates
+    camera.position = vec3(0.0f, 16.0f, 0.0f);
     camera.orientation = angleAxis(0.0f, vec3(0.0f, 0.0f, -1.0f));
 
-    float scale = 1.0f / (float)WORLD_WIDTH;
-    view = glm::scale(mat4(1.0f), vec3(scale));
-    view = glm::translate(view, -camera.position);
-
-    mat4 orient_mat = mat4_cast(camera.orientation);
-    view = orient_mat * view;
+    view = make_view_matrix();
 
     GLuint view_attrib = 3;
     glUniformMatrix4fv(view_attrib, 1, GL_FALSE, value_ptr(view));
@@ -83,8 +74,8 @@ void Ocean::init() {
     int viewport_dimensions[4];
     glGetIntegerv(GL_VIEWPORT, viewport_dimensions);
     float aspect_ratio = viewport_dimensions[2] / (float)viewport_dimensions[3];
-    perspective = glm::perspective(glm::radians(45.0f), aspect_ratio,
-                                   0.1f, (float)WORLD_WIDTH);
+
+    perspective = make_perspective_matrix(aspect_ratio);
 
     GLuint persp_attrib = 4;
     glUniformMatrix4fv(persp_attrib, 1, GL_FALSE, value_ptr(perspective));
@@ -104,6 +95,24 @@ void Ocean::init() {
         const GLvoid *data = &(indices[0]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
+}
+
+mat4 Ocean::make_view_matrix() {
+    float scale = (float)1.0f / (float)WORLD_WIDTH;
+    mat4 orient_mat = mat4_cast(camera.orientation);
+
+    // What we want to do is translate, then rotate, then scale --
+    // this is expressed backwards in matrix multiplication
+    mat4 view_mat = glm::scale(mat4(1.0f), vec3(scale));
+    view_mat = orient_mat * view_mat;
+    view_mat = glm::translate(view_mat, -camera.position);
+
+    return view_mat;
+}
+
+mat4 Ocean::make_perspective_matrix(float aspect_ratio) {
+    return glm::perspective(
+        radians(45.0f), aspect_ratio, 0.1f, (float)WORLD_WIDTH);
 }
 
 void Ocean::cleanup() {
@@ -141,12 +150,7 @@ void Ocean::update(double dt) {
 
     camera.orientation = normalize(camera.orientation);
 
-    float scale = 1.0f / (float)WORLD_WIDTH;
-    view = glm::scale(mat4(1.0f), vec3(scale));
-    view = glm::translate(view, -camera.position);
-
-    mat4 orient_mat = mat4_cast(camera.orientation);
-    view = orient_mat * view;
+    view = make_view_matrix();
 
     GLuint view_attrib = 3;
     glUniformMatrix4fv(view_attrib, 1, GL_FALSE, value_ptr(view));
@@ -164,8 +168,8 @@ void Ocean::on_window_resize(GLFWwindow *window, int width, int height) {
     (void)window;
 
     float aspect_ratio = width / (float)height;
-    perspective = glm::perspective(glm::radians(45.0f), aspect_ratio,
-                                   0.1f, (float)WORLD_WIDTH);
+    perspective = make_perspective_matrix(aspect_ratio);
+
     GLuint persp_attrib = 4;
     glUniformMatrix4fv(persp_attrib, 1, GL_FALSE, value_ptr(perspective));
 }
