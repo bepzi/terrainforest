@@ -22,3 +22,8 @@ cmake ..
 make
 ./terrainforest
 ```
+
+The `CMakeLists.txt` automatically generates a compilation database
+file (`compile_commands.json`) in the build directory. If you tools
+use it, you may want to symlink it from the root repo directory to get
+proper code completion.
