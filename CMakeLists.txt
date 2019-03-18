@@ -15,19 +15,9 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_subdirectory(libs/glfw-3.2.1)
+add_subdirectory(libs/glfw)
+
 include_directories(libs/glad/include)
-
-# # Add source files
-# file(GLOB_RECURSE SOURCE_FILES
-#   ${CMAKE_SOURCE_DIR}/src/*.c
-#   ${CMAKE_SOURCE_DIR}/src/*.cpp)
-
-# # Add header files
-# file(GLOB_RECURSE HEADER_FILES
-#   ${CMAKE_SOURCE_DIR}/src/*.h
-#   ${CMAKE_SOURCE_DIR}/src/*.hpp)
-
 add_library(glad
   libs/glad/src/glad.c)
 
