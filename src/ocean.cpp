@@ -153,6 +153,11 @@ void Ocean::on_key_event(GLFWwindow *window, int key,
 void Ocean::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
     (void)window;
 
+    if (is_first_mouse_movement) {
+        is_first_mouse_movement = false;
+        mouse_pos = vec2(xpos, ypos);
+    }
+
     const float sensitivity = 0.05f;
 
     // TODO: Can the positions overflow, since they're unbounded?

@@ -43,6 +43,7 @@ class Ocean : public Stage {
     vec2 screen_size;
     vec2 screen_center;
 
+    bool is_first_mouse_movement = false;
     vec2 mouse_pos;
     std::unordered_map<int, std::string> pressed_keys;
 

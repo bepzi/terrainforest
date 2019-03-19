@@ -6,6 +6,11 @@
 using glm::vec2;
 using glm::vec3;
 
+using glm::sin;
+using glm::cos;
+using glm::asin;
+using glm::acos;
+
 #include <iostream>
 
 class Camera {
@@ -14,11 +19,8 @@ class Camera {
         FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN
     };
 
-    Camera() : position(vec3(0.0f)),
-               front(vec3(0.0f, 0.0f, -1.0f)),
-               up(vec3(0.0f, 1.0f, 0.0f)),
-               pitch(0.0f),
-               yaw(0.0f) {}
+    static constexpr float MAX_PITCH = 89.0f;
+    static constexpr float MIN_PITCH = -89.0f;
 
     /**
      * Create a new free-camera at a position facing an initial
@@ -27,9 +29,34 @@ class Camera {
     Camera(vec3 pos, vec3 direction, vec3 upwards = vec3(0.0f, 1.0f, 0.0f))
         : position(pos),
           front(glm::normalize(direction)),
-          up(glm::normalize(upwards)),
-          pitch(0.0f),
-          yaw(0.0f) {}
+          up(glm::normalize(upwards)) {
+
+        float pitch_rad = asin(front.y);
+
+        if (glm::degrees(pitch_rad) > MAX_PITCH ||
+            glm::degrees(pitch_rad) < MIN_PITCH) {
+            std::string err_msg = "cannot create a camera with pitch not within range";
+            err_msg.append(" [");
+            err_msg.append(std::to_string(MIN_PITCH));
+            err_msg.append(", ");
+            err_msg.append(std::to_string(MAX_PITCH));
+            err_msg.append("], got: ");
+            err_msg.append(std::to_string(glm::degrees(pitch_rad)));
+            err_msg.append(" degrees");
+
+            throw std::invalid_argument(err_msg);
+        }
+
+        // Division by zero shouldn't be possible here
+        float yaw_rad = asin(front.z / cos(pitch_rad));
+
+        this->pitch = glm::degrees(pitch_rad);
+        this->yaw = glm::degrees(yaw_rad);
+    }
+
+    Camera() : Camera(vec3(0.0f, 0.0f, 0.0f),
+                      vec3(0.0f, 0.0f, -1.0f),
+                      vec3(0.0f, 1.0f, 0.0f)) {}
 
     /**
      * Pan the camera by some amount in X and Y.
@@ -39,14 +66,14 @@ class Camera {
         yaw += dir.x;
 
         // Prevent gimbal lock
-        if (pitch > 89.0f) {
-            pitch = 89.0f;
-        } else if (pitch < -89.0f) {
-            pitch = -89.0f;
+        if (pitch > MAX_PITCH) {
+            pitch = MAX_PITCH;
+        } else if (pitch < MIN_PITCH) {
+            pitch = MIN_PITCH;
         }
 
         this->front.x = (float)(cos(glm::radians(pitch)) * cos(glm::radians(yaw)));
-        this->front.y = (float)sin(glm::radians(pitch));
+        this->front.y = (float)(sin(glm::radians(pitch)));
         this->front.z = (float)(cos(glm::radians(pitch)) * sin(glm::radians(yaw)));
         this->front = glm::normalize(front);
     }
@@ -87,6 +114,7 @@ class Camera {
     // Perpendicular to the look direction, defines the up direction
     glm::vec3 up;
 
+    // Pitch and yaw, in degrees
     float pitch;
     float yaw;
 };
