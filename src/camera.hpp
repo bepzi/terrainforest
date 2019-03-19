@@ -1,8 +1,10 @@
 #pragma once
 
-#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+using glm::vec2;
+using glm::vec3;
 
 #include <iostream>
 
@@ -12,28 +14,22 @@ class Camera {
         FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN
     };
 
-    Camera() {
-        this->position = glm::vec3(0.0f);
-        this->front = glm::vec3(0.0f, 0.0f, -1.0f);
-        this->up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-        this->pitch = 0.0f;
-        this->yaw = 0.0f;
-    }
+    Camera() : position(vec3(0.0f)),
+               front(vec3(0.0f, 0.0f, -1.0f)),
+               up(vec3(0.0f, 1.0f, 0.0f)),
+               pitch(0.0f),
+               yaw(0.0f) {}
 
     /**
      * Create a new free-camera at a position facing an initial
      * direction, in world coordinates.
      */
-    Camera(glm::vec3 position, glm::vec3 direction,
-           glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f)) {
-        this->position = position;
-        this->front = glm::normalize(direction);
-        this->up = glm::normalize(up);
-
-        this->pitch = 0.0f;
-        this->yaw = 0.0f;
-    }
+    Camera(vec3 pos, vec3 direction, vec3 upwards = vec3(0.0f, 1.0f, 0.0f))
+        : position(pos),
+          front(glm::normalize(direction)),
+          up(glm::normalize(upwards)),
+          pitch(0.0f),
+          yaw(0.0f) {}
 
     /**
      * Pan the camera by some amount in X and Y.
@@ -49,10 +45,9 @@ class Camera {
             pitch = -89.0f;
         }
 
-        glm::vec3 front;
-        front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-        front.y = sin(glm::radians(pitch));
-        front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+        this->front.x = (float)(cos(glm::radians(pitch)) * cos(glm::radians(yaw)));
+        this->front.y = (float)sin(glm::radians(pitch));
+        this->front.z = (float)(cos(glm::radians(pitch)) * sin(glm::radians(yaw)));
         this->front = glm::normalize(front);
     }
 

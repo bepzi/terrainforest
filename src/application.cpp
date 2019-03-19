@@ -72,12 +72,15 @@ void Application::run() {
     glfwTerminate();
 }
 
-void Application::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
+void Application::on_mouse_move(GLFWwindow *win, double xpos, double ypos) {
+    (void)win;
     stage->on_mouse_move(window, xpos, ypos);
 }
 
-void Application::on_key_event(GLFWwindow *window, int key,
+void Application::on_key_event(GLFWwindow *win, int key,
                                int scancode, int action, int mods) {
+    (void)win;
+
     if (action == GLFW_PRESS) {
         if (key == GLFW_KEY_ESCAPE) {
             glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -87,8 +90,8 @@ void Application::on_key_event(GLFWwindow *window, int key,
     stage->on_key_event(window, key, scancode, action, mods);
 }
 
-void Application::on_window_resize(GLFWwindow *window, int width, int height) {
-    (void)window;
+void Application::on_window_resize(GLFWwindow *win, int width, int height) {
+    (void)win;
     glViewport(0, 0, width, height);
 
     stage->on_window_resize(window, width, height);

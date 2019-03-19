@@ -7,22 +7,24 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-using namespace glm;
 using std::array;
+
+using glm::vec3;
+using glm::mat4;
 
 struct Vertex {
     vec3 coords;
     vec3 normal;
 };
 
-template <size_t N = 3>
+template <unsigned int N = 3>
 class Plane {
    public:
     constexpr Plane() {
         size_t ii = 0;
 
-        for (size_t y = 0; y < N; ++y) {
-            for (size_t x = 0; x < N; ++x) {
+        for (unsigned int y = 0; y < N; ++y) {
+            for (unsigned int x = 0; x < N; ++x) {
                 unsigned int index = (y * N) + x;
 
                 Vertex *v = &(vertices[index]);
@@ -65,7 +67,7 @@ class Plane {
         // What we want to do is translate, then rotate, then scale --
         // this is expressed backwards in matrix multiplication
         mat4 ret = glm::scale(mat4(1.0f), vec3(scale_amt));
-        ret = glm::rotate(ret, radians(rotate_amt), vec3(1.0f, 0.0f, 0.0f));
+        ret = glm::rotate(ret, glm::radians(rotate_amt), vec3(1.0f, 0.0f, 0.0f));
         ret = glm::translate(ret, vec3(move_amt, move_amt, 0.0f));
 
         return ret;

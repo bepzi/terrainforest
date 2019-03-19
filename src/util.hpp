@@ -19,7 +19,7 @@ read_file(const std::string &filename) {
         throw std::runtime_error("failed to open file!");
     }
 
-    size_t file_size = (size_t)file.tellg();
+    std::streamsize file_size = file.tellg();
     auto buffer = std::make_unique<vector<char>>(file_size + 1);
 
     file.seekg(0);

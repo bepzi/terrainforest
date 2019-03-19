@@ -20,7 +20,7 @@ void Ocean::init(GLFWwindow *window) {
 
         glDeleteShader(vert_shader);
         glDeleteShader(frag_shader);
-    } catch (std::runtime_error e) {
+    } catch (const std::runtime_error &e) {
         std::cerr << e.what() << std::endl;
         return;
     }
@@ -67,7 +67,7 @@ void Ocean::init(GLFWwindow *window) {
 
     // Put the plane into world coordinates
     model = plane.get_model_matrix(WORLD_WIDTH);
-    GLuint model_attrib = 2;
+    GLint model_attrib = 2;
     glUniformMatrix4fv(model_attrib, 1, GL_FALSE, value_ptr(model));
 
     // Put the world into camera/view coordinates
@@ -94,7 +94,7 @@ void Ocean::cleanup() {
 
 void Ocean::update(double dt) {
     static const float move_speed = 24.0;
-    float move_amt = move_speed * dt;
+    float move_amt = move_speed * (float)dt;
 
     if (pressed_keys.find(GLFW_KEY_W) != pressed_keys.end()) {
         camera.move(Camera::Direction::FORWARD, move_amt);
@@ -155,10 +155,6 @@ void Ocean::on_key_event(GLFWwindow *window, int key,
 void Ocean::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
     (void)window;
 
-    if (xpos == screen_center.x && ypos == screen_center.y) {
-        return;
-    }
-
     const float sensitivity = 0.05f;
 
     // TODO: Can the positions overflow, since they're unbounded?
@@ -182,15 +178,15 @@ void Ocean::on_window_resize(GLFWwindow *window, int width, int height) {
 
 void Ocean::update_view_matrix() {
     view = camera.get_view_matrix();
-    GLuint view_attrib = 3;
+    GLint view_attrib = 3;
     glUniformMatrix4fv(view_attrib, 1, GL_FALSE, value_ptr(view));
 }
 
 void Ocean::update_perspective_matrix() {
     float aspect_ratio = (float)screen_size.x / (float)screen_size.y;
     perspective = glm::perspective(
-        radians(45.0f), aspect_ratio, 0.1f, (float)WORLD_WIDTH);
+        glm::radians(45.0f), aspect_ratio, 0.1f, (float)WORLD_WIDTH);
 
-    GLuint persp_attrib = 4;
+    GLint persp_attrib = 4;
     glUniformMatrix4fv(persp_attrib, 1, GL_FALSE, value_ptr(perspective));
 }
