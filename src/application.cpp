@@ -50,8 +50,6 @@ void Application::run() {
     stage = std::make_unique<Ocean>();
     stage->init(window);
 
-    // TODO: https://stackoverflow.com/a/41273081
-    // https://gafferongames.com/post/fix_your_timestep/
     double prev = glfwGetTime();
     while (!glfwWindowShouldClose(window)) {
         double now = glfwGetTime();
@@ -60,7 +58,7 @@ void Application::run() {
 
         stage->update(dt);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        stage->draw(dt);
+        stage->draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

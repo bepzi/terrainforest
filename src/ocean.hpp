@@ -20,7 +20,7 @@ class Ocean : public Stage {
 
     void update(double dt) override;
 
-    void draw(double dt) override;
+    void draw() override;
 
     void on_key_event(GLFWwindow *, int, int, int, int) override;
 

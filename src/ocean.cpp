@@ -112,9 +112,7 @@ void Ocean::update(double dt) {
     update_view_matrix();
 }
 
-void Ocean::draw(double dt) {
-    (void)dt;
-
+void Ocean::draw() {
     glUseProgram(program);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, num_elements, GL_UNSIGNED_INT, (char *)nullptr + 0);
