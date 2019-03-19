@@ -83,17 +83,26 @@ class Camera {
      * relative to its current orientation.
      */
     void move(Direction direction, float amount) {
-        if (direction == Direction::FORWARD) {
+        switch (direction) {
+        case Direction::FORWARD:
             position += (front * amount);
-        } else if (direction == Direction::BACKWARD) {
+            break;
+        case Direction::BACKWARD:
             position -= (front * amount);
-        } else if (direction == Direction::LEFT) {
+            break;
+        case Direction::LEFT:
             position -= glm::normalize(glm::cross(front, up)) * amount;
-        } else if (direction == Direction::RIGHT) {
+            break;
+        case Direction::RIGHT:
             position += glm::normalize(glm::cross(front, up)) * amount;
+            break;
+        case Direction::UP:
+            position += (up * amount);
+            break;
+        case Direction::DOWN:
+            position -= (up * amount);
+            break;
         }
-
-        // UP and DOWN unhandled for now
     }
 
     /**

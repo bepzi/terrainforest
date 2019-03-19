@@ -12,7 +12,7 @@ const size_t N = 256;
 // World goes from [-width, width] in all axis
 const size_t WORLD_WIDTH = N;
 
-void Ocean::init(GLFWwindow *window) {
+void Ocean::init(GLFWwindow *win) {
     try {
         auto vert_shader = compile_shader("../src/shader.vert", GL_VERTEX_SHADER);
         auto frag_shader = compile_shader("../src/shader.frag", GL_FRAGMENT_SHADER);
@@ -25,6 +25,8 @@ void Ocean::init(GLFWwindow *window) {
         return;
     }
 
+    this->window = win;
+
     glUseProgram(program);
 
     int viewport[4];
@@ -34,7 +36,7 @@ void Ocean::init(GLFWwindow *window) {
 
     // Move the cursor to the center of the screen
     mouse_pos = vec2(screen_center.x, screen_center.y);
-    glfwSetCursorPos(window, mouse_pos.x, mouse_pos.y);
+    glfwSetCursorPos(win, mouse_pos.x, mouse_pos.y);
 
     Plane<N> plane;
     auto vertices = plane.vertices;
@@ -93,6 +95,24 @@ void Ocean::cleanup() {
 }
 
 void Ocean::update(double dt) {
+    // Some keys are not detected by the key event handler, so we poll
+    // for them manually
+    {
+        int space = glfwGetKey(this->window, GLFW_KEY_SPACE);
+        if (space == GLFW_PRESS) {
+            this->pressed_keys[GLFW_KEY_SPACE] = " ";
+        } else {
+            this->pressed_keys.erase(GLFW_KEY_SPACE);
+        }
+
+        int lshift = glfwGetKey(this->window, GLFW_KEY_LEFT_SHIFT);
+        if (lshift == GLFW_PRESS) {
+            this->pressed_keys[GLFW_KEY_LEFT_SHIFT] = "LSHIFT";
+        } else {
+            this->pressed_keys.erase(GLFW_KEY_LEFT_SHIFT);
+        }
+    }
+
     static const float move_speed = 24.0;
     float move_amt = move_speed * (float)dt;
 
@@ -108,6 +128,12 @@ void Ocean::update(double dt) {
     if (pressed_keys.find(GLFW_KEY_D) != pressed_keys.end()) {
         camera.move(Camera::Direction::RIGHT, move_amt);
     }
+    if (pressed_keys.find(GLFW_KEY_SPACE) != pressed_keys.end()) {
+        camera.move(Camera::Direction::UP, move_amt);
+    }
+    if (pressed_keys.find(GLFW_KEY_LEFT_SHIFT) != pressed_keys.end()) {
+        camera.move(Camera::Direction::DOWN, move_amt);
+    }
 
     update_view_matrix();
 }
@@ -118,9 +144,9 @@ void Ocean::draw() {
     glDrawElements(GL_TRIANGLES, num_elements, GL_UNSIGNED_INT, (char *)nullptr + 0);
 }
 
-void Ocean::on_key_event(GLFWwindow *window, int key,
+void Ocean::on_key_event(GLFWwindow *win, int key,
                          int scancode, int action, int mods) {
-    (void)window;
+    (void)win;
     (void)mods;
 
     if (action == GLFW_PRESS) {
@@ -131,18 +157,20 @@ void Ocean::on_key_event(GLFWwindow *window, int key,
 
         this->pressed_keys[key] = key_name;
 
-        // TODO: Rebind this or require CTRL to be held
-        switch (key_name[0]) {
-        case 'w':
-        case 'W':
-            if (!wireframe) {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                wireframe = true;
-            } else {
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                wireframe = false;
+        if (mods & GLFW_MOD_CONTROL) {
+            // Holding down CTRL, check for bound key actions
+            switch (key_name[0]) {
+            case 'w':
+            case 'W':
+                if (!wireframe) {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                    wireframe = true;
+                } else {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                    wireframe = false;
+                }
+                break;
             }
-            break;
         }
 
     } else if (action == GLFW_RELEASE) {
@@ -150,8 +178,8 @@ void Ocean::on_key_event(GLFWwindow *window, int key,
     }
 }
 
-void Ocean::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
-    (void)window;
+void Ocean::on_mouse_move(GLFWwindow *win, double xpos, double ypos) {
+    (void)win;
 
     if (is_first_mouse_movement) {
         is_first_mouse_movement = false;
@@ -171,8 +199,8 @@ void Ocean::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
     mouse_pos = vec2(xpos, ypos);
 }
 
-void Ocean::on_window_resize(GLFWwindow *window, int width, int height) {
-    (void)window;
+void Ocean::on_window_resize(GLFWwindow *win, int width, int height) {
+    (void)win;
 
     screen_size = vec2(width, height);
     screen_center = vec2(width, height) / 2.0f;

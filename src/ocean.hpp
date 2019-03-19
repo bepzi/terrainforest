@@ -29,7 +29,7 @@ class Ocean : public Stage {
     void on_window_resize(GLFWwindow *, int, int) override;
 
   private:
-    bool wireframe = false;
+    GLFWwindow *window;
 
     GLuint program;
     GLuint vao;
@@ -42,6 +42,8 @@ class Ocean : public Stage {
 
     vec2 screen_size;
     vec2 screen_center;
+
+    bool wireframe = false;
 
     bool is_first_mouse_movement = false;
     vec2 mouse_pos;
