@@ -29,7 +29,7 @@ class Ocean : public Stage {
 
     void on_key_event(GLFWwindow *, int, int, int, int) override;
 
-    void on_mouse_event(GLFWwindow *, double, double) override;
+    void on_mouse_move(GLFWwindow *, double, double) override;
 
     void on_window_resize(GLFWwindow *, int, int) override;
 

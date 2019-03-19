@@ -174,7 +174,7 @@ void Ocean::on_window_resize(GLFWwindow *window, int width, int height) {
     glUniformMatrix4fv(persp_attrib, 1, GL_FALSE, value_ptr(perspective));
 }
 
-void Ocean::on_mouse_event(GLFWwindow *window, double xpos, double ypos) {
+void Ocean::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
     (void)window;
 
     if (xpos == screen_center.x && ypos == screen_center.y) {

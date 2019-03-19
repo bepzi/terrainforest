@@ -37,7 +37,7 @@ void Application::run() {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwSetKeyCallback(window, Application::on_key_event);
-    glfwSetCursorPosCallback(window, Application::on_mouse_event);
+    glfwSetCursorPosCallback(window, Application::on_mouse_move);
 
     glfwSwapInterval(1);
 
@@ -70,8 +70,8 @@ void Application::run() {
     glfwTerminate();
 }
 
-void Application::on_mouse_event(GLFWwindow *window, double xpos, double ypos) {
-    stage->on_mouse_event(window, xpos, ypos);
+void Application::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
+    stage->on_mouse_move(window, xpos, ypos);
 }
 
 void Application::on_key_event(GLFWwindow *window, int key,

@@ -15,7 +15,7 @@ private:
 
     static void on_key_event(GLFWwindow *, int, int, int, int);
 
-    static void on_mouse_event(GLFWwindow *, double, double);
+    static void on_mouse_move(GLFWwindow *, double, double);
 
     static void on_window_resize(GLFWwindow *, int, int);
 
