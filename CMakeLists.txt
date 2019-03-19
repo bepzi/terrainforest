@@ -27,6 +27,7 @@ add_executable(terrainforest
   src/stage.hpp
   src/ocean.cpp
   src/plane.hpp
+  src/camera.hpp
   src/util.hpp)
 
 target_compile_options(terrainforest PRIVATE -Wall -Wextra -Wmost -pedantic)
