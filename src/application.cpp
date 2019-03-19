@@ -34,7 +34,11 @@ void Application::run() {
         throw std::runtime_error("failed to init GLAD");
     }
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     glfwSetKeyCallback(window, Application::on_key_event);
+    glfwSetCursorPosCallback(window, Application::on_mouse_event);
+
     glfwSwapInterval(1);
 
     glViewport(0, 0, WIDTH, HEIGHT);
@@ -42,7 +46,7 @@ void Application::run() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     stage = std::make_unique<Ocean>();
-    stage->init();
+    stage->init(window);
 
     // TODO: https://stackoverflow.com/a/41273081
     // https://gafferongames.com/post/fix_your_timestep/
@@ -64,6 +68,10 @@ void Application::run() {
 
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void Application::on_mouse_event(GLFWwindow *window, double xpos, double ypos) {
+    stage->on_mouse_event(window, xpos, ypos);
 }
 
 void Application::on_key_event(GLFWwindow *window, int key,

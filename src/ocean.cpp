@@ -174,6 +174,35 @@ void Ocean::on_window_resize(GLFWwindow *window, int width, int height) {
     glUniformMatrix4fv(persp_attrib, 1, GL_FALSE, value_ptr(perspective));
 }
 
+void Ocean::on_mouse_event(GLFWwindow *window, double xpos, double ypos) {
+    (void)window;
+
+    if (xpos == screen_center.x && ypos == screen_center.y) {
+        return;
+    }
+
+    // TODO: Can the positions overflow?
+    vec2 delta = vec2(xpos, ypos) - mouse_pos;
+    const float sensitivity = 0.0030f;
+
+    camera.yaw = delta.x * sensitivity;
+    camera.pitch = delta.y * sensitivity;
+    camera.roll = 0.0;
+
+    if (camera.pitch > radians(89.0)) {
+        camera.pitch = radians(89.0);
+    } else if (camera.pitch < radians(-89.0)) {
+        camera.pitch = radians(-89.0);
+    }
+
+    // Update state variables
+    mouse_pos = vec2(xpos, ypos);
+
+    view = make_view_matrix();
+    GLuint view_attrib = 3;
+    glUniformMatrix4fv(view_attrib, 1, GL_FALSE, value_ptr(view));
+}
+
 void Ocean::on_key_event(GLFWwindow *window, int key,
                          int scancode, int action, int mods) {
     (void)window;

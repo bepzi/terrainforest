@@ -19,17 +19,19 @@ using std::array;
 
 class Ocean : public Stage {
    public:
-    void init();
+    void init(GLFWwindow *) override;
 
-    void cleanup();
+    void cleanup() override;
 
-    void update(double dt);
+    void update(double dt) override;
 
-    void draw(double dt);
+    void draw(double dt) override;
 
-    void on_key_event(GLFWwindow *, int, int, int, int);
+    void on_key_event(GLFWwindow *, int, int, int, int) override;
 
-    void on_window_resize(GLFWwindow *, int, int);
+    void on_mouse_event(GLFWwindow *, double, double) override;
+
+    void on_window_resize(GLFWwindow *, int, int) override;
 
   private:
     bool wireframe = false;
