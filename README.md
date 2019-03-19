@@ -19,6 +19,8 @@ git clone --recurse-submodules <this repo's url>
 cd terrainforest
 mkdir build && cd build
 cmake ..
+# or, if you want to use clang:
+# cmake -D CMAKE_CXX_COMPILER=/path/to/clang++ ..
 make
 ./terrainforest
 ```
