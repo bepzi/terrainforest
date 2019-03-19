@@ -5,8 +5,8 @@
 #include "application.hpp"
 #include "ocean.hpp"
 
-static const int WIDTH = 640;
-static const int HEIGHT = 480;
+static const int WIDTH = 1024;
+static const int HEIGHT = 720;
 
 // Create space for static member variables
 GLFWwindow * Application::window = nullptr;

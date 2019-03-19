@@ -7,7 +7,7 @@
 #include "util.hpp"
 #include "plane.hpp"
 
-const size_t N = 128;
+const size_t N = 256;
 
 // World goes from [-width, width] in all axis
 const size_t WORLD_WIDTH = N;
@@ -93,7 +93,7 @@ void Ocean::cleanup() {
 }
 
 void Ocean::update(double dt) {
-    static const float move_speed = 16.0;
+    static const float move_speed = 24.0;
     float move_amt = move_speed * dt;
 
     if (pressed_keys.find(GLFW_KEY_W) != pressed_keys.end()) {
