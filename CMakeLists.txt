@@ -26,7 +26,6 @@ add_executable(terrainforest
   src/application.cpp
   src/stage.hpp
   src/ocean.cpp
-  src/vertex.hpp
   src/plane.hpp
   src/util.hpp)
 
