@@ -12,6 +12,11 @@
 using namespace glm;
 using std::array;
 
+struct Vertex {
+    vec3 coords;
+    vec3 normal;
+};
+
 template <size_t N = 3>
 class Plane {
    public:
