@@ -34,6 +34,8 @@ void Application::run() {
         throw std::runtime_error("failed to init GLAD");
     }
 
+    glEnable(GL_DEPTH_TEST);
+
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwSetKeyCallback(window, Application::on_key_event);
@@ -57,7 +59,7 @@ void Application::run() {
         prev = now;
 
         stage->update(dt);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         stage->draw(dt);
 
         glfwSwapBuffers(window);
