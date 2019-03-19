@@ -1,10 +1,12 @@
 #version 420 core
+#extension GL_ARB_explicit_uniform_location : enable
 
 // Interpolated from the vertex shader
-in vec4 worldPosition;
+in vec3 worldPosition;
 in vec4 viewPosition;
+in vec3 normal;
 
-in vec4 normal;
+layout(location = 5) uniform vec3 lightPos;
 
 out vec4 fragColor;
 

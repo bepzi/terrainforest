@@ -10,16 +10,16 @@ layout(location = 4) uniform mat4 uPersp;
 
 // layout(location = 3) uniform mat4 uModelInvTransp;
 
-out vec4 worldPosition;
+out vec3 worldPosition;
 out vec4 viewPosition;
 
-out vec4 normal;
+out vec3 normal;
 
 void main() {
-    worldPosition = uModel * vec4(aPos, 1.0);
-    viewPosition = uView * worldPosition;
+    worldPosition = (uModel * vec4(aPos, 1.0)).xyz;
+    viewPosition = uView * vec4(worldPosition, 1.0);
     // normal = normalize(uModelInvTransp * vec4(aNorm, 1.0));
-    normal = normalize(vec4(aNorm, 1.0));
+    normal = aNorm;
     // TODO: Correct the normal vectors
 
     gl_Position = uPersp * viewPosition;
