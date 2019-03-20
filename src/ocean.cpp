@@ -1,11 +1,15 @@
-#include <iostream>
+#include "ocean.hpp"
+
+#include "plane.hpp"
+#include "util.hpp"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ocean.hpp"
-#include "util.hpp"
-#include "plane.hpp"
+#include <iostream>
 
 const size_t N = 128;
 
@@ -16,12 +20,12 @@ void Ocean::init(GLFWwindow *win) {
     try {
         // TODO: It would be super rad to be able to compile the
         // shaders INTO this executable, at compile time
-        auto vert_shader = compile_shader("../src/shader.vert", GL_VERTEX_SHADER);
-        auto frag_shader = compile_shader("../src/shader.frag", GL_FRAGMENT_SHADER);
-        program = link_program({vert_shader, frag_shader});
+        auto vert = compile_shader("../src/shader.vert", GL_VERTEX_SHADER);
+        auto frag = compile_shader("../src/shader.frag", GL_FRAGMENT_SHADER);
+        program = link_program({vert, frag});
 
-        glDeleteShader(vert_shader);
-        glDeleteShader(frag_shader);
+        glDeleteShader(vert);
+        glDeleteShader(frag);
     } catch (const std::runtime_error &e) {
         std::cerr << e.what() << std::endl;
         return;
@@ -60,13 +64,18 @@ void Ocean::init(GLFWwindow *win) {
 
     GLuint pos_attrib = 0;
     glEnableVertexAttribArray(pos_attrib);
-    glVertexAttribPointer(pos_attrib, 3, GL_FLOAT,
-                          GL_FALSE, sizeof(Vertex), (char *)nullptr + 0);
+    glVertexAttribPointer(
+        pos_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (char *)nullptr + 0);
 
     GLuint norm_attrib = 1;
     glEnableVertexAttribArray(norm_attrib);
-    glVertexAttribPointer(norm_attrib, 3, GL_FLOAT,
-                          GL_FALSE, sizeof(Vertex), (char *)0 + sizeof(vec3));
+    glVertexAttribPointer(
+        norm_attrib,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        (char *)0 + sizeof(vec3));
 
     // Put the plane into world coordinates
     model = plane.get_model_matrix(WORLD_WIDTH);
@@ -76,10 +85,14 @@ void Ocean::init(GLFWwindow *win) {
     // Fix the normal vectors with the inverse transpose
     mat4 model_inv_transp = glm::transpose(glm::inverse(model));
     GLint model_inv_transp_attrib = 14;
-    glUniformMatrix4fv(model_inv_transp_attrib, 1, GL_FALSE, value_ptr(model_inv_transp));
+    glUniformMatrix4fv(
+        model_inv_transp_attrib, 1, GL_FALSE, value_ptr(model_inv_transp));
 
     // Put the world into camera/view coordinates
-    camera = Camera(vec3(0.0f, 8.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
+    camera = Camera(
+        vec3(0.0f, 8.0f, 0.0f),
+        vec3(0.0f, 0.0f, -1.0f),
+        vec3(0.0f, 1.0f, 0.0f));
     update_view_matrix();
 
     update_eye_position();
@@ -88,7 +101,8 @@ void Ocean::init(GLFWwindow *win) {
 
     // LIGHTING
     GLint light_pos_attrib = 5;
-    glUniform3fv(light_pos_attrib, 1, value_ptr(vec3(0.0f, (float)WORLD_WIDTH, 0.0f)));
+    glUniform3fv(
+        light_pos_attrib, 1, value_ptr(vec3(0.0f, (float)WORLD_WIDTH, 0.0f)));
 
     GLint ambient_light_color_attrib = 6;
     glUniform3fv(ambient_light_color_attrib, 1, value_ptr(vec3(0.05f)));
@@ -150,6 +164,9 @@ void Ocean::update(double dt) {
     static const float move_speed = (float)WORLD_WIDTH / 10.0f;
     float move_amt = move_speed * (float)dt;
 
+    // TODO: It would be nice if pressing multiple keys didn't change
+    // the speed you move at
+
     if (pressed_keys.find(GLFW_KEY_W) != pressed_keys.end()) {
         camera.move(Camera::Direction::FORWARD, move_amt);
     }
@@ -176,11 +193,16 @@ void Ocean::update(double dt) {
 void Ocean::draw() {
     glUseProgram(program);
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, num_elements, GL_UNSIGNED_INT, (char *)nullptr + 0);
+    glDrawElements(
+        GL_TRIANGLES, num_elements, GL_UNSIGNED_INT, (char *)nullptr + 0);
 }
 
-void Ocean::on_key_event(GLFWwindow *win, int key,
-                         int scancode, int action, int mods) {
+void Ocean::on_key_event(
+    GLFWwindow *win,
+    int key,
+    int scancode,
+    int action,
+    int mods) {
     (void)win;
     (void)mods;
 
@@ -259,5 +281,6 @@ void Ocean::update_perspective_matrix() {
 
 void Ocean::update_eye_position() {
     GLint eye_pos_attrib = 13;
-    glUniformMatrix3fv(eye_pos_attrib, 1, GL_FALSE, value_ptr(camera.get_position()));
+    glUniformMatrix3fv(
+        eye_pos_attrib, 1, GL_FALSE, value_ptr(camera.get_position()));
 }

@@ -6,18 +6,16 @@
 using glm::vec2;
 using glm::vec3;
 
-using glm::sin;
-using glm::cos;
-using glm::asin;
 using glm::acos;
+using glm::asin;
+using glm::cos;
+using glm::sin;
 
 #include <iostream>
 
 class Camera {
-   public:
-    enum Direction {
-        FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN
-    };
+public:
+    enum Direction { FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN };
 
     static constexpr float MAX_PITCH = 89.0f;
     static constexpr float MIN_PITCH = -89.0f;
@@ -26,21 +24,22 @@ class Camera {
      * Create a new free-camera at a position facing an initial
      * direction, in world coordinates.
      */
-    Camera(vec3 pos, vec3 direction, vec3 upwards = vec3(0.0f, 1.0f, 0.0f))
-        : position(pos),
-          front(glm::normalize(direction)),
-          up(glm::normalize(upwards)) {
+    Camera(vec3 pos, vec3 direction, vec3 upwards) :
+        position(pos),
+        front(glm::normalize(direction)),
+        up(glm::normalize(upwards)) {
 
         float pitch_rad = asin(front.y);
 
         if (glm::degrees(pitch_rad) > MAX_PITCH ||
             glm::degrees(pitch_rad) < MIN_PITCH) {
-            std::string err_msg = "cannot create a camera with pitch not within range";
+            std::string err_msg =
+                "cannot create a camera with pitch not within range";
             err_msg.append(" [");
             err_msg.append(std::to_string(MIN_PITCH));
             err_msg.append(", ");
             err_msg.append(std::to_string(MAX_PITCH));
-            err_msg.append("], got: ");
+            err_msg.append("], but got: ");
             err_msg.append(std::to_string(glm::degrees(pitch_rad)));
             err_msg.append(" degrees");
 
@@ -54,9 +53,11 @@ class Camera {
         this->yaw = glm::degrees(yaw_rad);
     }
 
-    Camera() : Camera(vec3(0.0f, 0.0f, 0.0f),
-                      vec3(0.0f, 0.0f, -1.0f),
-                      vec3(0.0f, 1.0f, 0.0f)) {}
+    Camera() :
+        Camera(
+            vec3(0.0f, 0.0f, 0.0f),
+            vec3(0.0f, 0.0f, -1.0f),
+            vec3(0.0f, 1.0f, 0.0f)) {}
 
     /**
      * Pan the camera by some amount in X and Y.
@@ -72,9 +73,11 @@ class Camera {
             pitch = MIN_PITCH;
         }
 
-        this->front.x = (float)(cos(glm::radians(pitch)) * cos(glm::radians(yaw)));
+        this->front.x =
+            (float)(cos(glm::radians(pitch)) * cos(glm::radians(yaw)));
         this->front.y = (float)(sin(glm::radians(pitch)));
-        this->front.z = (float)(cos(glm::radians(pitch)) * sin(glm::radians(yaw)));
+        this->front.z =
+            (float)(cos(glm::radians(pitch)) * sin(glm::radians(yaw)));
         this->front = glm::normalize(front);
     }
 
@@ -117,7 +120,7 @@ class Camera {
         return this->position;
     }
 
-   private:
+private:
     // Location of the camera in world coordinates
     glm::vec3 position;
 

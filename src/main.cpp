@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "application.hpp"
+
+#include <iostream>
 
 int main() {
     try {

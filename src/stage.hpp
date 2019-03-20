@@ -2,11 +2,10 @@
 
 #include <vector>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+typedef struct GLFWwindow GLFWwindow;
 
 class Stage {
-   public:
+public:
     virtual void init(GLFWwindow *) = 0;
 
     virtual void cleanup() = 0;
@@ -21,5 +20,5 @@ class Stage {
 
     virtual void on_mouse_move(GLFWwindow *, double, double) = 0;
 
-    virtual ~Stage(){};
+    virtual ~Stage() {};
 };

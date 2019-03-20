@@ -1,25 +1,25 @@
 #pragma once
 
-#include <cstdlib>
-#include <array>
-#include <iostream>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <array>
+#include <cstdlib>
+#include <iostream>
+
 using std::array;
 
-using glm::vec3;
 using glm::mat4;
+using glm::vec3;
 
 struct Vertex {
     vec3 coords;
     vec3 normal;
 };
 
-template <unsigned int N = 3>
+template<unsigned int N = 3>
 class Plane {
-   public:
+public:
     constexpr Plane() {
         size_t ii = 0;
 
@@ -67,7 +67,8 @@ class Plane {
         // What we want to do is translate, then rotate, then scale --
         // this is expressed backwards in matrix multiplication
         mat4 ret = glm::scale(mat4(1.0f), vec3(scale_amt));
-        ret = glm::rotate(ret, glm::radians(rotate_amt), vec3(1.0f, 0.0f, 0.0f));
+        ret =
+            glm::rotate(ret, glm::radians(rotate_amt), vec3(1.0f, 0.0f, 0.0f));
         ret = glm::translate(ret, vec3(move_amt, move_amt, 0.0f));
 
         return ret;

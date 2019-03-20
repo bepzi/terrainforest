@@ -1,15 +1,19 @@
+#include "application.hpp"
+
+#include "ocean.hpp"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-
-#include "application.hpp"
-#include "ocean.hpp"
 
 static const int WIDTH = 1024;
 static const int HEIGHT = 720;
 
 // Create space for static member variables
-GLFWwindow * Application::window = nullptr;
+GLFWwindow *Application::window = nullptr;
 std::unique_ptr<Stage> Application::stage = nullptr;
 
 void Application::run() {
@@ -75,8 +79,12 @@ void Application::on_mouse_move(GLFWwindow *win, double xpos, double ypos) {
     stage->on_mouse_move(window, xpos, ypos);
 }
 
-void Application::on_key_event(GLFWwindow *win, int key,
-                               int scancode, int action, int mods) {
+void Application::on_key_event(
+    GLFWwindow *win,
+    int key,
+    int scancode,
+    int action,
+    int mods) {
     (void)win;
 
     if (action == GLFW_PRESS) {
@@ -96,6 +104,5 @@ void Application::on_window_resize(GLFWwindow *win, int width, int height) {
 }
 
 void Application::on_glfw_error(int error, const char *description) {
-    std::cerr << "GLFW: " << description
-              << " (" << error << ")" << std::endl;
+    std::cerr << "GLFW: " << description << " (" << error << ")" << std::endl;
 }

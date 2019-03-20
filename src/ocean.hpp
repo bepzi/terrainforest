@@ -1,19 +1,21 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <unordered_map>
-
 #include "camera.hpp"
 #include "stage.hpp"
 
-using glm::vec3;
-using glm::vec2;
+#include <unordered_map>
+
 using glm::mat4;
+using glm::vec2;
+using glm::vec3;
+
+typedef struct GLFWwindow GLFWwindow;
+typedef unsigned int GLuint;
+typedef int GLint;
+typedef int GLsizei;
 
 class Ocean : public Stage {
-   public:
+public:
     void init(GLFWwindow *) override;
 
     void cleanup() override;
@@ -28,7 +30,7 @@ class Ocean : public Stage {
 
     void on_window_resize(GLFWwindow *, int, int) override;
 
-  private:
+private:
     GLFWwindow *window;
 
     GLuint program;

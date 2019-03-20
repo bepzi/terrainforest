@@ -1,8 +1,10 @@
 #pragma once
 
+#include "stage.hpp"
+
 #include <memory>
 
-#include "stage.hpp"
+typedef struct GLFWwindow GLFWwindow;
 
 class Application {
 public:
@@ -19,5 +21,5 @@ private:
 
     static void on_window_resize(GLFWwindow *, int, int);
 
-    static void on_glfw_error(int, const char*);
+    static void on_glfw_error(int, const char *);
 };

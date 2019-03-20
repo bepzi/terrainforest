@@ -1,18 +1,17 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <fstream>
 #include <memory>
 #include <vector>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 using std::array;
 using std::unique_ptr;
 using std::vector;
 
-unique_ptr<vector<char>>
-read_file(const std::string &filename) {
+unique_ptr<vector<char>> read_file(const std::string &filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
