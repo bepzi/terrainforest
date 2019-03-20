@@ -111,7 +111,11 @@ class Camera {
      */
     glm::mat4 get_view_matrix() {
         return glm::lookAt(position, position + front, up);
-    };
+    }
+
+    glm::vec3 get_position() {
+        return this->position;
+    }
 
    private:
     // Location of the camera in world coordinates

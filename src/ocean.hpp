@@ -55,4 +55,5 @@ class Ocean : public Stage {
 
     void update_view_matrix();
     void update_perspective_matrix();
+    void update_eye_position();
 };

@@ -14,6 +14,8 @@ const size_t WORLD_WIDTH = N;
 
 void Ocean::init(GLFWwindow *win) {
     try {
+        // TODO: It would be super rad to be able to compile the
+        // shaders INTO this executable, at compile time
         auto vert_shader = compile_shader("../src/shader.vert", GL_VERTEX_SHADER);
         auto frag_shader = compile_shader("../src/shader.frag", GL_FRAGMENT_SHADER);
         program = link_program({vert_shader, frag_shader});
@@ -61,7 +63,6 @@ void Ocean::init(GLFWwindow *win) {
     glVertexAttribPointer(pos_attrib, 3, GL_FLOAT,
                           GL_FALSE, sizeof(Vertex), (char *)nullptr + 0);
 
-    // TODO: Fix the normal vectors
     GLuint norm_attrib = 1;
     glEnableVertexAttribArray(norm_attrib);
     glVertexAttribPointer(norm_attrib, 3, GL_FLOAT,
@@ -72,11 +73,44 @@ void Ocean::init(GLFWwindow *win) {
     GLint model_attrib = 2;
     glUniformMatrix4fv(model_attrib, 1, GL_FALSE, value_ptr(model));
 
+    // Fix the normal vectors with the inverse transpose
+    mat4 model_inv_transp = glm::transpose(glm::inverse(model));
+    GLint model_inv_transp_attrib = 14;
+    glUniformMatrix4fv(model_inv_transp_attrib, 1, GL_FALSE, value_ptr(model_inv_transp));
+
     // Put the world into camera/view coordinates
     camera = Camera(vec3(0.0f, 8.0f, 0.0f), vec3(0.0f, 0.0f, -1.0f));
     update_view_matrix();
 
+    update_eye_position();
+
     update_perspective_matrix();
+
+    // LIGHTING
+    GLint light_pos_attrib = 5;
+    glUniform3fv(light_pos_attrib, 1, value_ptr(vec3(0.0f, (float)WORLD_WIDTH, 0.0f)));
+
+    GLint ambient_light_color_attrib = 6;
+    glUniform3fv(ambient_light_color_attrib, 1, value_ptr(vec3(0.05f)));
+
+    GLint diffuse_light_color_attrib = 7;
+    glUniform3fv(diffuse_light_color_attrib, 1, value_ptr(vec3(1.0f)));
+
+    GLint specular_light_color_attrib = 8;
+    glUniform3fv(specular_light_color_attrib, 1, value_ptr(vec3(1.0f)));
+
+    GLint ambient_material_color_attrib = 9;
+    vec3 material_color = vec3(155.0 / 255.0, 84.0 / 255.0, 21.0 / 255.0);
+    glUniform3fv(ambient_material_color_attrib, 1, value_ptr(material_color));
+
+    GLint diffuse_material_color_attrib = 10;
+    glUniform3fv(diffuse_material_color_attrib, 1, value_ptr(material_color));
+
+    GLint specular_material_color_attrib = 11;
+    glUniform3fv(specular_material_color_attrib, 1, value_ptr(vec3(0.0f)));
+
+    GLint material_shininess_attrib = 12;
+    glUniform1f(material_shininess_attrib, 32.0f);
 
     index_buffer = 0;
     glGenBuffers(1, &index_buffer);
@@ -136,6 +170,7 @@ void Ocean::update(double dt) {
     }
 
     update_view_matrix();
+    update_eye_position();
 }
 
 void Ocean::draw() {
@@ -216,8 +251,13 @@ void Ocean::update_view_matrix() {
 void Ocean::update_perspective_matrix() {
     float aspect_ratio = (float)screen_size.x / (float)screen_size.y;
     perspective = glm::perspective(
-        glm::radians(45.0f), aspect_ratio, 0.1f, (float)WORLD_WIDTH);
+        glm::radians(45.0f), aspect_ratio, 0.1f, (float)WORLD_WIDTH * 2);
 
     GLint persp_attrib = 4;
     glUniformMatrix4fv(persp_attrib, 1, GL_FALSE, value_ptr(perspective));
+}
+
+void Ocean::update_eye_position() {
+    GLint eye_pos_attrib = 13;
+    glUniformMatrix3fv(eye_pos_attrib, 1, GL_FALSE, value_ptr(camera.get_position()));
 }
