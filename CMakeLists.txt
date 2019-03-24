@@ -29,8 +29,7 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
     -Wheader-hygiene
     -Widiomatic-parentheses
     -Wmove
-    -Wfloat-conversion
-    -Wfor-loop-analysis)
+    -Wloop-analysis)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
   target_compile_options(terrainforest PRIVATE
     -Wsuggest-attribute=pure
