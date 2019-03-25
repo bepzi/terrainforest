@@ -1,6 +1,6 @@
 # terrainforest
 
-Experiments with OpenGL and terrain generation.
+**WIP:** Experiments with OpenGL and terrain generation.
 
 ## Building
 
@@ -15,7 +15,7 @@ Libraries needed:
 GLAD and GLFW are already in this repo under `libs`.
 
 ``` bash
-git clone --recurse-submodules <this repo's url>
+git clone --recurse-submodules <this repo>
 cd terrainforest
 mkdir build && cd build
 cmake ..
