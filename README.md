@@ -11,7 +11,7 @@ git clone --recurse-submodules <this repo>
 cd <this repo>
 cmake -S . -B build
 cmake --build build
-./terrainforest
+./build/forest
 ```
 
 The `CMakeLists.txt` automatically generates a compilation database
