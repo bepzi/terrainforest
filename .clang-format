@@ -78,15 +78,3 @@ SpaceBeforeCpp11BracedList: true
 SpaceAfterTemplateKeyword: false
 
 AlignEscapedNewlines: Right
----
-Language: JavaScript
-ColumnLimit: 100
-
-JavaScriptQuotes: Single
-JavaScriptWrapImports: true
----
-Language: Java
-ColumnLimit: 100
-
-BreakAfterJavaFieldAnnotations: true
-...

@@ -4,34 +4,41 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(TerrainForest
   VERSION 0.1.0
   DESCRIPTION "Experiments with OpenGL and terrain generation"
   LANGUAGES C CXX)
 
-add_executable(forest
-  src/main.cpp
-  src/application.cpp
-  src/ocean.cpp)
-
-# OpenGL
-cmake_policy(SET CMP0072 NEW)
+# Dependencies and Libraries
+find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
-
-# GLM
 find_package(glm 0.9 REQUIRED)
 
-# GLFW
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(libs/glfw)
+add_library(glad STATIC
+  extern/glad/src/glad.c)
+target_include_directories(glad PUBLIC
+  extern/glad/include)
+get_property(GLAD_INCLUDE_DIRS
+  TARGET glad PROPERTY INCLUDE_DIRECTORIES)
 
-# GLAD
-add_library(glad libs/glad/src/glad.c)
-target_include_directories(glad PUBLIC libs/glad/include)
-target_include_directories(forest PRIVATE ${OPENGL_INCLUDE_DIR})
-target_link_libraries(forest glfw glad ${OPENGL_LIBRARIES})
+# Executable
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
+add_executable(forest "${SRC_FILES}")
+
+target_include_directories(forest PRIVATE
+  "${SDL2_INCLUDE_DIRS}"
+  "${OPENGL_INCLUDE_DIR}"  # not a typo, should be DIR
+  "${GLAD_INCLUDE_DIRS}"
+  "${GLM_INCLUDE_DIRS}")
+target_link_libraries(forest PRIVATE
+  "${SDL2_LIBRARIES}"
+  "${OPENGL_LIBRARIES}"
+  "${CMAKE_DL_LIBS}"
+  glm
+  glad)
 
 set_target_properties(forest PROPERTIES
   CXX_STANDARD 17                  # -std=c++17
@@ -51,7 +58,8 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"
     -Wfloat-equal
     -Wzero-as-null-pointer-constant
     -Wpedantic
-    # -fno-exceptions
+    -Werror
+    -fno-exceptions
     -pedantic
     -pedantic-errors)
 endif()
@@ -75,5 +83,3 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     -Wsuggest-override
     -Wmaybe-uninitialized)
 endif()
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS true)

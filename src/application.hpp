@@ -1,25 +1,36 @@
 #pragma once
 
-#include "stage.hpp"
+#include <SDL.h>
 
 #include <memory>
 
-typedef struct GLFWwindow GLFWwindow;
-
 class Application {
-public:
-    static void run();
-
 private:
-    static GLFWwindow *window;
+    SDL_Window *window;
+    bool running;
 
-    static std::unique_ptr<Stage> stage;
+    /**
+     * Draw with the OpenGL context to the window
+     */
+    void draw();
 
-    static void on_key_event(GLFWwindow *, int, int, int, int);
+    /**
+     * Update the application's state
+     */
+    void update(double dt);
 
-    static void on_mouse_move(GLFWwindow *, double, double);
+    void handle_window_event(SDL_Event event);
+    void handle_keydown_event(SDL_Event event);
 
-    static void on_window_resize(GLFWwindow *, int, int);
+public:
+    [[gnu::nonnull]]
+    explicit Application(SDL_Window *win) :
+        window(win),
+        running(true) {}
 
-    static void on_glfw_error(int, const char *);
+    /**
+     * Run the main loop
+     */
+    [[nodiscard]]
+    int run();
 };

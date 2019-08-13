@@ -10,6 +10,7 @@ Built with [Modern CMake](https://cliutils.gitlab.io/modern-cmake/).
 git clone --recurse-submodules <this repo>
 cd <this repo>
 cmake -S . -B build
+# Or, to use Clang: `CC=clang CXX=clang++ cmake -S . -B build`
 cmake --build build
 ./build/forest
 ```
